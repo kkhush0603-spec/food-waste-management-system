@@ -52,9 +52,7 @@ def find_nearest_ngo(restaurant_location):
 
 
 def create_donation(restaurant_name, phone, food_name, quantity, area, expiry_time):
-    current_time = datetime.now()
-
-    if expiry_time <= current_time:
+    if expiry_time <= datetime.now():
         return None, "Food is expired. Donation rejected."
 
     restaurant_location = locations[area]
@@ -79,7 +77,6 @@ def create_donation(restaurant_name, phone, food_name, quantity, area, expiry_ti
     }
 
     donations.append(donation)
-
     return donation, "Donation request created successfully."
 
 
@@ -106,10 +103,6 @@ def predict_surplus():
     average = total_quantity / len(donations)
 
     return round(average)
-
-
-def get_ngos():
-    return ngos
 
 
 def get_locations():
