@@ -2,7 +2,6 @@ from datetime import datetime
 import random
 import math
 
-# Hyderabad area coordinates used for distance-based matching
 locations = {
     "Kukatpally": (17.4948, 78.3996),
     "Miyapur": (17.4933, 78.3915),
@@ -52,7 +51,7 @@ def find_nearest_ngo(restaurant_location):
     return nearest_ngo, min_distance
 
 
-def create_donation(restaurant_name, food_name, quantity, area, expiry_time):
+def create_donation(restaurant_name, phone, food_name, quantity, area, expiry_time):
     current_time = datetime.now()
 
     if expiry_time <= current_time:
@@ -65,6 +64,7 @@ def create_donation(restaurant_name, food_name, quantity, area, expiry_time):
 
     donation = {
         "restaurant": restaurant_name,
+        "phone": phone,
         "food": food_name,
         "quantity": quantity,
         "area": area,
