@@ -42,6 +42,7 @@ if menu == "Home":
     total_meals = sum(d["quantity"] for d in donations)
 
     col1, col2, col3 = st.columns(3)
+
     col1.metric("Active Listings", len(donations))
     col2.metric("Completed Pickups", completed)
     col3.metric("Meals Shared", total_meals)
@@ -50,6 +51,7 @@ if menu == "Home":
         "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c",
         use_container_width=True
     )
+
 
 elif menu == "Add Listing":
     st.title("Add Food Listing")
@@ -102,6 +104,7 @@ elif menu == "Add Listing":
                     st.warning(f"Pickup OTP: {donation['otp']}")
                     st.write("Share this OTP only with the pickup person.")
 
+
 elif menu == "Active Listings":
     st.title("Active Food Listings")
 
@@ -131,6 +134,7 @@ elif menu == "Active Listings":
                 st.success("Delivered")
 
             st.divider()
+
 
 elif menu == "Pickup Portal":
     st.title("Pickup Portal")
@@ -183,6 +187,7 @@ elif menu == "Pickup Portal":
                 st.success("Pickup verified successfully. Donation completed.")
             else:
                 st.error("Invalid OTP. Pickup not verified.")
+
 
 elif menu == "Analytics":
     st.title("Analytics")
