@@ -24,8 +24,6 @@ menu = st.sidebar.radio(
     ]
 )
 
-# ---------- HOME ----------
-
 if menu == "Home":
     st.markdown(
         """
@@ -40,12 +38,10 @@ if menu == "Home":
     )
 
     donations = backend.get_donations()
-
     completed = len([d for d in donations if d["status"] == "Delivered"])
     total_meals = sum(d["quantity"] for d in donations)
 
     col1, col2, col3 = st.columns(3)
-
     col1.metric("Active Listings", len(donations))
     col2.metric("Completed Pickups", completed)
     col3.metric("Meals Shared", total_meals)
@@ -55,8 +51,6 @@ if menu == "Home":
         use_container_width=True
     )
 
-# ---------- ADD LISTING ----------
-
 elif menu == "Add Listing":
     st.title("Add Food Listing")
     st.write("Create a surplus food listing for pickup.")
@@ -65,6 +59,7 @@ elif menu == "Add Listing":
 
     with st.form("listing_form"):
         restaurant_name = st.text_input("Restaurant / Event Name")
+        phone = st.text_input("Restaurant Contact Number")
         food_name = st.text_input("Food Name")
         quantity = st.number_input("Quantity in Plates", min_value=1, step=1)
 
@@ -82,13 +77,16 @@ elif menu == "Add Listing":
         submitted = st.form_submit_button("Create Listing")
 
         if submitted:
-            if restaurant_name.strip() == "" or food_name.strip() == "":
+            if restaurant_name.strip() == "" or food_name.strip() == "" or phone.strip() == "":
                 st.error("Please fill all required details.")
+            elif not phone.isdigit() or len(phone) != 10:
+                st.error("Please enter a valid 10-digit phone number.")
             else:
                 expiry_time = datetime.now() + timedelta(hours=expiry_hours)
 
                 donation, message = backend.create_donation(
                     restaurant_name,
+                    phone,
                     food_name,
                     quantity,
                     area,
@@ -103,8 +101,6 @@ elif menu == "Add Listing":
                     st.info(f"Approx Distance Score: {donation['distance']} km")
                     st.warning(f"Pickup OTP: {donation['otp']}")
                     st.write("Share this OTP only with the pickup person.")
-
-# ---------- ACTIVE LISTINGS ----------
 
 elif menu == "Active Listings":
     st.title("Active Food Listings")
@@ -135,8 +131,6 @@ elif menu == "Active Listings":
                 st.success("Delivered")
 
             st.divider()
-
-# ---------- PICKUP PORTAL ----------
 
 elif menu == "Pickup Portal":
     st.title("Pickup Portal")
@@ -169,6 +163,7 @@ elif menu == "Pickup Portal":
         st.subheader("Pickup Details")
         st.write(f"**Food:** {donation['food']}")
         st.write(f"**Donor:** {donation['restaurant']}")
+        st.write(f"**Restaurant Contact:** {donation['phone']}")
         st.write(f"**Quantity:** {donation['quantity']} plates")
         st.write(f"**Assigned NGO:** {donation['ngo']}")
         st.write(f"**Pickup Area:** {donation['area']}")
@@ -188,8 +183,6 @@ elif menu == "Pickup Portal":
                 st.success("Pickup verified successfully. Donation completed.")
             else:
                 st.error("Invalid OTP. Pickup not verified.")
-
-# ---------- ANALYTICS ----------
 
 elif menu == "Analytics":
     st.title("Analytics")
