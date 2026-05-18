@@ -61,14 +61,17 @@ elif menu == "Add Listing":
     st.title("Add Food Listing")
     st.write("Create a surplus food listing for pickup.")
 
+    locations = backend.get_locations()
+
     with st.form("listing_form"):
         restaurant_name = st.text_input("Restaurant / Event Name")
         food_name = st.text_input("Food Name")
         quantity = st.number_input("Quantity in Plates", min_value=1, step=1)
 
-        st.subheader("Pickup Location")
-        x = st.number_input("X Coordinate", step=1)
-        y = st.number_input("Y Coordinate", step=1)
+        area = st.selectbox(
+            "Pickup Area in Hyderabad",
+            list(locations.keys())
+        )
 
         expiry_hours = st.number_input(
             "Food is safe for next how many hours?",
@@ -88,7 +91,7 @@ elif menu == "Add Listing":
                     restaurant_name,
                     food_name,
                     quantity,
-                    (x, y),
+                    area,
                     expiry_time
                 )
 
@@ -96,7 +99,8 @@ elif menu == "Add Listing":
                     st.error(message)
                 else:
                     st.success("Listing created successfully.")
-                    st.info(f"Matched NGO: {donation['ngo']}")
+                    st.info(f"Matched NGO: {donation['ngo']} ({donation['ngo_area']})")
+                    st.info(f"Approx Distance Score: {donation['distance']} km")
                     st.warning(f"Pickup OTP: {donation['otp']}")
                     st.write("Share this OTP only with the pickup person.")
 
@@ -119,7 +123,9 @@ elif menu == "Active Listings":
             col2.write(f"**Quantity:** {d['quantity']} plates")
             col3.write(f"**NGO:** {d['ngo']}")
 
-            st.write(f"**Location:** {d['location']}")
+            st.write(f"**Pickup Area:** {d['area']}")
+            st.write(f"**NGO Area:** {d['ngo_area']}")
+            st.write(f"**Approx Distance Score:** {d['distance']} km")
             st.write(f"**Expiry:** {d['expiry'].strftime('%d-%m-%Y %H:%M')}")
             st.write(f"**Status:** {d['status']}")
 
@@ -165,7 +171,8 @@ elif menu == "Pickup Portal":
         st.write(f"**Donor:** {donation['restaurant']}")
         st.write(f"**Quantity:** {donation['quantity']} plates")
         st.write(f"**Assigned NGO:** {donation['ngo']}")
-        st.write(f"**Pickup Location:** {donation['location']}")
+        st.write(f"**Pickup Area:** {donation['area']}")
+        st.write(f"**NGO Area:** {donation['ngo_area']}")
 
         entered_otp = st.number_input(
             "Enter Pickup OTP",
@@ -209,5 +216,6 @@ elif menu == "Analytics":
         for d in donations:
             st.write(
                 f"🍽️ **{d['food']}** | {d['quantity']} plates | "
-                f"{d['restaurant']} → {d['ngo']} | {d['status']}"
+                f"{d['restaurant']} ({d['area']}) → {d['ngo']} ({d['ngo_area']}) | "
+                f"{d['status']}"
             )
